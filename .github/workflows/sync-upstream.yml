@@ -1,0 +1,32 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天自动同步
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # 动态添加上游仓库
+    - name: Add upstream remote
+      run: git remote add upstream https://github.com/ls125781003/tvboxtg.git
+
+    # 合并上游更新（优先保留你的修改）
+    - name: Merge upstream/main
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git fetch upstream
+        # 使用 -X ours 策略保留本地冲突文件
+        git merge -X ours upstream/main --no-ff -m "Merge upstream changes"
+
+    # 推送合并结果到GitHub
+    - name: Push to GitHub
+      run: git push origin main
