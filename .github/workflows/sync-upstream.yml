@@ -21,11 +21,11 @@ jobs:
     # 合并上游更新（优先保留你的修改）
     - name: Merge upstream/main
       run: |
-      git config user.name "github-actions"
-      git config user.email "github-actions@users.noreply.github.com"
-      git fetch upstream
+        git config user.name "github-actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git fetch upstream
    # 添加以下参数允许合并无关历史
-      git merge upstream/main --allow-unrelated-histories --no-ff -m "Merge upstream changes" 
+        git merge upstream/main --allow-unrelated-histories --no-ff -m "Merge upstream changes" 
 
     # 推送合并结果到GitHub
     - name: Push to GitHub
