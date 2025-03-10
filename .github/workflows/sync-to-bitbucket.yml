@@ -1,0 +1,42 @@
+name: Sync to Bitbucket
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # 关键步骤：隐藏敏感操作
+    - name: Configure Git Remote (Masked)
+      env:
+        BITBUCKET_USER: ${{ secrets.BITBUCKET_USER }}
+        BITBUCKET_REPO: ${{ secrets.BITBUCKET_REPO }}
+      run: |
+        # 关闭命令回显，避免日志暴露用户名和仓库名
+        set +x
+        REMOTE_URL="git@bitbucket.org:${BITBUCKET_USER}/${BITBUCKET_REPO}.git"
+        git remote add bitbucket "$REMOTE_URL"
+        echo "Remote 'bitbucket' configured securely."
+
+    - name: Add Bitbucket to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
+    - name: Configure SSH Key
+      run: |
+        echo "${{ secrets.BITBUCKET_SSH_KEY }}" > ~/.ssh/bitbucket_key
+        chmod 600 ~/.ssh/bitbucket_key
+
+    - name: Mirror to Bitbucket
+      env:
+        GIT_SSH_COMMAND: "ssh -i ~/.ssh/bitbucket_key"
+      run: |
+        git push bitbucket --mirror
