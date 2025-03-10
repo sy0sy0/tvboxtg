@@ -12,7 +12,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Add upstream remote
-      run: git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPO.git
+      run: git remote add upstream https://github.com/ls125781003/tvboxtg.git
     - name: Merge upstream/main
       run: |
         git config user.name "github-actions"
