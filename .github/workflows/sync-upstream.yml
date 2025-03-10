@@ -19,5 +19,9 @@ jobs:
         git config user.email "github-actions@users.noreply.github.com"
         git fetch upstream
         git merge upstream/main --allow-unrelated-histories --no-ff -m "Merge upstream changes"
+    - name: Increase Git buffer
+      run: |
+        git config --global http.postBuffer 524288000
+        git config --global https.postBuffer 524288000
     - name: Push to GitHub
       run: git push origin main
